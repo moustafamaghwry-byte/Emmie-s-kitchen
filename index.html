@@ -94,7 +94,7 @@
   .hero-ctas{display:flex;gap:12px;flex-wrap:wrap;}
   .btn-primary{
     background:var(--coral);color:#fff;border:none;padding:15px 28px;
-    border-radius:999px;font-weight:800;font-size:.98rem;box-shadow:0 10px 24px rgba(240,121,107,.35);
+    border-radius:999px;font-weight:800;font-size:0.98rem;box-shadow:0 10px 24px rgba(240,121,107,.35);
   }
   .btn-primary:hover{background:var(--coral-dark);}
   .btn-secondary{
@@ -131,19 +131,89 @@
   .section-head h2{font-size:2rem;color:var(--ink);}
   .section-sub{text-align:center;color:var(--ink-soft);font-size:.9rem;max-width:1120px;margin:8px auto 30px;}
 
-  .tabs{display:flex;gap:10px;max-width:1120px;margin:0 auto 30px;flex-wrap:wrap;justify-content:center;}
+  .tabs-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    max-width: 1120px;
+    margin: 0 auto 30px;
+  }
+  .tabs{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
   .tab{
     background:#fff;border:1.5px solid var(--line);color:var(--ink-soft);
     padding:9px 20px;border-radius:999px;font-weight:700;font-size:.86rem;
   }
   .tab.active{background:var(--coral);border-color:var(--coral);color:#fff;}
 
+  .btn-custom-trigger {
+    background: #fff;
+    border: 1.5px solid var(--coral);
+    color: var(--coral-dark);
+    padding: 9px 22px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: .86rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(240,121,107,.12);
+    transition: all 0.2s;
+  }
+  .btn-custom-trigger:hover {
+    background: var(--coral-light);
+  }
+
+  .main-custom-box {
+    width: 100%;
+    max-width: 500px;
+    background: #fff;
+    border: 2px dashed var(--coral);
+    border-radius: 20px;
+    padding: 20px;
+    margin: 10px auto 20px;
+    box-shadow: var(--shadow);
+    display: none;
+  }
+  .main-custom-box.show {
+    display: block;
+    animation: fadeIn 0.3s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
   .grid{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;}
   .item-card{
     background:#fff;border:1px solid var(--line);border-radius:var(--radius);
     padding:20px;display:flex;flex-direction:column;gap:10px;transition:transform .15s, box-shadow .15s;
+    position: relative; overflow: hidden;
   }
   .item-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);}
+  
+  .bestseller-badge {
+    position: absolute;
+    top: 12px;
+    left: -35px;
+    background: #FFD700;
+    color: #4A3226;
+    font-size: 0.68rem;
+    font-weight: 800;
+    padding: 4px 35px;
+    transform: rotate(-45deg);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    z-index: 5;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  [dir="ltr"] .bestseller-badge {
+    left: auto;
+    right: -35px;
+    transform: rotate(45deg);
+  }
+
   .item-top{display:flex;align-items:center;gap:12px;}
   .item-emoji{
     width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;
@@ -151,7 +221,7 @@
   }
   .item-emoji.c-coral{background:var(--coral-light);}
   .item-emoji.c-blue{background:var(--blue-light);}
-  .item-name{font-weight:800;font-size:1.02rem;color:var(--ink);}
+  .item-name{font-weight:800;font-size:1.02rem;color:var(--ink); padding-inline-start: 15px;}
   .item-desc{color:var(--ink-soft);font-size:.85rem;min-height:2.3em;}
   .item-foot{display:flex;align-items:center;justify-content:space-between;margin-top:4px;}
   .item-price{font-weight:800;color:var(--coral-dark);font-size:1.02rem;}
@@ -160,6 +230,20 @@
     padding:9px 18px;font-weight:700;font-size:.85rem;
   }
   .add-btn:hover{background:var(--blue-dark);}
+
+  .min-order-alert {
+    background: #FFF0EE;
+    border: 1px solid var(--coral);
+    color: var(--coral-dark);
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 14px;
+    display: none;
+    text-align: center;
+  }
+  .min-order-alert.show { display: block; }
 
   /* ===== Cart drawer ===== */
   .overlay{position:fixed;inset:0;background:rgba(74,50,38,.4);z-index:60;opacity:0;pointer-events:none;transition:opacity .25s;}
@@ -221,6 +305,60 @@
   }
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
+  .whatsapp-floating {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    width: 60px;
+    height: 60px;
+    background-color: #25D366;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(37, 211, 102, 0.4);
+    z-index: 50;
+    text-decoration: none;
+    transition: transform 0.2s, background-color 0.2s;
+  }
+  .whatsapp-floating:hover {
+    transform: scale(1.08);
+    background-color: #20ba5a;
+  }
+  .whatsapp-floating svg {
+    width: 32px;
+    height: 32px;
+    fill: currentColor;
+  }
+  [dir="ltr"] .whatsapp-floating {
+    left: auto;
+    right: 24px;
+  }
+
+  .confirm-overlay{
+    position:fixed;inset:0;background:rgba(74,50,38,.5);z-index:80;display:none;
+    align-items:center;justify-content:center;padding:20px;
+  }
+  .confirm-overlay.show{display:flex;}
+  .confirm-box{
+    background:#fff;border-radius:24px;padding:34px 28px;max-width:380px;width:100%;text-align:center;
+    box-shadow:var(--shadow);
+  }
+  .confirm-icon{font-size:2.6rem;margin-bottom:10px;}
+  .confirm-box h3{font-size:1.25rem;color:var(--ink);margin-bottom:8px;}
+  .confirm-box p{color:var(--ink-soft);font-size:.9rem;margin-bottom:18px;}
+  .confirm-number{
+    background:var(--coral-light);color:var(--coral-dark);border-radius:16px;
+    padding:14px;font-size:1.6rem;font-weight:900;letter-spacing:.03em;margin-bottom:20px;
+  }
+  .confirm-actions{display:flex;flex-direction:column;gap:10px;}
+  .confirm-track-btn{
+    background:var(--blue);color:#fff;border:none;padding:13px;border-radius:999px;font-weight:700;font-size:.9rem;text-decoration:none;
+  }
+  .confirm-track-btn:hover{background:var(--blue-dark);}
+  .confirm-close-btn{background:none;border:none;color:var(--ink-soft);font-size:.85rem;padding:6px;}
+
   footer{padding:34px 20px;text-align:center;color:var(--ink-soft);font-size:.85rem;}
   .footer-brand{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px;}
   .footer-brand img{width:26px;height:26px;border-radius:50%;}
@@ -235,6 +373,12 @@
 </style>
 </head>
 <body>
+
+<a href="https://wa.me/201158899779" class="whatsapp-floating" target="_blank" aria-label="Contact on WhatsApp">
+  <svg viewBox="0 0 24 24">
+    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.717-1.454L0 24zm6.59-4.846c1.6.95 3.198 1.451 4.82 1.452 5.423 0 9.835-4.412 9.838-9.838.001-2.628-1.021-5.098-2.88-6.959-1.858-1.86-4.329-2.883-6.96-2.884-5.427 0-9.84 4.412-9.843 9.839-.001 1.73.456 3.418 1.322 4.927L1.93 22.067l4.717-1.729zm13.197-6.248c-.292-.146-1.729-.854-1.996-.951-.266-.098-.461-.147-.655.146-.194.293-.753.951-.923 1.146-.17.195-.341.219-.633.073-.292-.146-1.236-.456-2.355-1.453-.871-.777-1.459-1.738-1.63-2.03-.17-.293-.018-.452.129-.597.132-.131.292-.341.439-.512.146-.17.195-.293.292-.488.098-.195.049-.366-.024-.512-.073-.146-.655-1.579-.897-2.163-.236-.569-.477-.492-.655-.501-.17-.008-.365-.011-.56-.011-.195 0-.512.073-.78.366-.268.293-1.023 1.001-1.023 2.441 0 1.439 1.047 2.83 1.193 3.025.146.195 2.06 3.146 4.989 4.414.697.301 1.242.482 1.668.617.7.223 1.338.192 1.843.116.562-.085 1.729-.707 1.974-1.39.244-.683.244-1.268.171-1.39-.073-.122-.268-.195-.56-.341z"/>
+  </svg>
+</a>
 
 <header class="site">
   <div class="site-bar">
@@ -296,13 +440,32 @@
     <h2 data-ar="أطباقنا" data-en="Our Dishes">أطباقنا</h2>
   </div>
   <p class="section-sub" data-ar="الأسعار بالجنيه المصري" data-en="Prices in Egyptian Pounds">الأسعار بالجنيه المصري</p>
-  <div class="tabs" id="tabs"></div>
+  
+  <div class="tabs-wrapper">
+    <div class="tabs" id="tabs"></div>
+    
+    <button class="btn-custom-trigger" id="toggleCustomBoxBtn" type="button">
+      <span data-ar="طلب خاص؟ أضف صنفًا مخصصًا" data-en="Special request? Add custom item">طلب خاص؟ أضف صنفًا مخصصًا</span> ✨
+    </button>
+    
+    <div class="main-custom-box" id="mainCustomBox">
+      <div class="field" style="margin-top:0;">
+        <input type="text" id="customItemName" data-ar-ph="اسم الصنف المخصص (مثال: محشي ورق عنب بالريش)" data-en-ph="Custom item name (e.g. Special Vine Leaves)" placeholder="اسم الصنف المخصص">
+      </div>
+      <div class="field">
+        <input type="number" id="customItemPrice" min="0" data-ar-ph="السعر التقديري إن وجد (اختياري)" data-en-ph="Estimated price (optional)" placeholder="السعر التقديري (اختياري)">
+      </div>
+      <button class="btn-primary" id="addCustomItemBtn" type="button" style="margin-top:12px; width:100%; padding:10px;" data-ar="➕ تأكيد وإضافة للسلة" data-en="➕ Confirm & Add to Cart">➕ تأكيد وإضافة للسلة</button>
+    </div>
+  </div>
+
   <div class="grid" id="menuGrid"></div>
 </section>
 
 <footer>
   <div class="footer-brand"><img src="logo.png" alt="مطبخ إيمي"><strong data-ar="مطبخ إيمي" data-en="Emmie's Kitchen">مطبخ إيمي</strong></div>
   <p data-ar="طعم البيت، لحد باب بيتك 🏡" data-en="The taste of home, delivered to your door 🏡">طعم البيت، لحد باب بيتك 🏡</p>
+  <p style="margin-top:10px"><a href="tracking.html" style="color:var(--blue);font-weight:700;text-decoration:none" data-ar="تابع طبق سابق ↗" data-en="Track a previous order ↗">تابع طبق سابق ↗</a></p>
 </footer>
 
 <div class="overlay" id="overlay"></div>
@@ -313,7 +476,14 @@
   </div>
   <div class="drawer-body" id="drawerBody">
 
+    <div class="min-order-alert" id="minOrderAlert"></div>
+
     <div id="cartItemsWrap"></div>
+
+    <div class="field">
+      <label data-ar="تاريخ ووقت الاستلام المطلوب" data-en="Required Delivery/Pickup Time">تاريخ ووقت الاستلام المطلوب</label>
+      <input type="datetime-local" id="preOrderTime" required>
+    </div>
 
     <div class="field">
       <label data-ar="ملاحظة على الطلب (اختياري)" data-en="Order note (optional)">ملاحظة على الطلب (اختياري)</label>
@@ -338,15 +508,19 @@
     <hr class="divider">
 
     <div class="field">
-      <label data-ar="حساب التوصيل" data-en="Delivery calculation">حساب التوصيل</label>
+      <label data-ar="موقع التوصيل (GPS)" data-en="Delivery Location (GPS)">موقع التوصيل (GPS)</label>
       <div class="delivery-box">
         <div class="delivery-row">
-          <span style="font-size:.85rem" data-ar="حدد موقعك عشان نحسب التوصيل بالمسافة" data-en="Share your location to calculate delivery by distance">حدد موقعك عشان نحسب التوصيل بالمسافة</span>
-          <button class="locate-btn" id="locateBtn" type="button" data-ar="📍 حدد موقعي" data-en="📍 Use my location">📍 حدد موقعي</button>
+          <button class="locate-btn" id="locateBtn" type="button" data-ar="📍 تحديد موقعي التلقائي" data-en="📍 Auto-detect location">📍 تحديد موقعي التلقائي</button>
         </div>
-        <div class="delivery-status" id="deliveryStatus" data-ar="مفيش موقع محدد لسه" data-en="No location set yet">مفيش موقع محدد لسه</div>
+        <div class="delivery-status" id="deliveryStatus" data-ar="أو الصق رابط خريطة جوجل بالأسفل" data-en="Or paste Google Maps link below">أو الصق رابط خريطة جوجل بالأسفل</div>
+        
         <div class="field" style="margin-top:10px;">
-          <label style="font-weight:600;font-size:.8rem" data-ar="أو أدخل المسافة يدوي (كم)" data-en="Or enter distance manually (km)">أو أدخل المسافة يدوي (كم)</label>
+          <input type="text" id="googleMapsUrl" data-ar-ph="رابط لوكيشن جوجل مابس (اختياري)" data-en-ph="Google Maps URL (Optional)" placeholder="رابط لوكيشن جوجل مابس">
+        </div>
+
+        <div class="field" style="margin-top:10px;">
+          <label style="font-weight:600;font-size:.8rem" data-ar="المسافة المحسوبة أو المدخلة (كم)" data-en="Calculated/Manual Distance (km)">المسافة المحسوبة أو المدخلة (كم)</label>
           <input type="number" id="manualKm" min="0" step="0.1" data-ar-ph="مثال: 5" data-en-ph="e.g. 5" placeholder="مثال: 5">
         </div>
       </div>
@@ -364,7 +538,6 @@
           <span data-ar="فيزا عند الاستلام" data-en="Card on delivery">فيزا عند الاستلام</span>
         </label>
       </div>
-      <p class="hint" data-ar="الدفع بالفيزا بيتم من خلال ماكينة محمولة وقت التسليم" data-en="Card payment is collected via a portable POS machine at delivery">الدفع بالفيزا بيتم من خلال ماكينة محمولة وقت التسليم</p>
     </div>
 
     <div class="totals-box">
@@ -377,18 +550,28 @@
   </div>
   <div class="drawer-foot">
     <button class="place-order-btn" id="placeOrderBtn" type="button">
-      <span data-ar="إرسال الطلب عبر واتساب" data-en="Send order via WhatsApp">إرسال الطلب عبر واتساب</span> 📲
+      <span data-ar="تأكيد وإرسال الطلب" data-en="Confirm & Place Order">تأكيد وإرسال الطلب</span> 🍽️
     </button>
-    <p class="hint" style="text-align:center;margin-top:8px" data-ar="هيتفتح واتساب برسالة جاهزة فيها تفاصيل طلبك للتأكيد" data-en="WhatsApp will open with a ready message containing your order details for confirmation">هيتفتح واتساب برسالة جاهزة فيها تفاصيل طلبك للتأكيد</p>
   </div>
 </aside>
 
 <div class="toast" id="toast"></div>
 
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="confirm-icon">✅</div>
+    <h3 data-ar="تمت العملية وتأكيد طلبك بنجاح" data-en="Your order has been confirmed">تمت العملية وتأكيد طلبك بنجاح</h3>
+    <div class="confirm-number nums" id="confirmNumber">#0000</div>
+    <div class="confirm-actions">
+      <a class="confirm-track-btn" id="confirmTrackLink" href="#" target="_blank" data-ar="تابع حالة طلبك" data-en="Track your order">تابع حالة طلبك</a>
+      <button class="confirm-close-btn" id="confirmCloseBtn" type="button" data-ar="إغلاق" data-en="Close">إغلاق</button>
+    </div>
+  </div>
+</div>
+
 <script type="module">
-/* ==================== Firebase ==================== */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getDatabase, ref, push, set, onValue, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { getDatabase, ref, push, set, onValue, serverTimestamp, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA8h_w_JvoPV1PA5QFHJg_nAInFLCSEw9Y",
@@ -411,10 +594,10 @@ const CONFIG = {
   kitchenLocation: { lat: 30.0626, lng: 31.3219 },
   deliveryBaseFee: 15,
   deliveryRatePerKm: 4,
-  taxRate: 0.14
+  taxRate: 0.14,
+  minOrderLimit: 150
 };
 
-/* قائمة الأصناف — بتتحمل لحظيًا من Firebase (تقدر تضيف/تعدّل/تحذف من صفحة admin.html) */
 let MENU = [];
 onValue(ref(db, 'menu'), (snapshot)=>{
   const data = snapshot.val() || {};
@@ -428,6 +611,7 @@ const CATEGORIES = [
   { key:'all', ar:"الكل", en:"All" },
   { key:'appetizers', ar:"مقبلات", en:"Appetizers" },
   { key:'mains', ar:"أطباق رئيسية", en:"Main Dishes" },
+  { key:'bakery', ar:"مخبوزات وطواجن", en:"Bakery & Tajines" },
   { key:'desserts', ar:"حلويات", en:"Desserts" },
   { key:'drinks', ar:"مشروبات", en:"Drinks" }
 ];
@@ -435,7 +619,13 @@ const CATEGORIES = [
 let lang = 'ar';
 let activeCat = 'all';
 let cart = {};
+let customItems = []; 
 let deliveryDistanceKm = null;
+let detectedCoords = null;
+
+const now = new Date();
+now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+document.getElementById('preOrderTime').min = now.toISOString().slice(0, 16);
 
 function applyLang(){
   document.documentElement.lang = lang;
@@ -473,9 +663,17 @@ function renderMenu(){
   items.forEach((item, idx)=>{
     const card = document.createElement('div');
     card.className = 'item-card';
+    
+    if (item.bestSeller === true || item.bestseller === true) {
+      const badge = document.createElement('div');
+      badge.className = 'bestseller-badge';
+      badge.textContent = lang === 'ar' ? 'الأكثر مبيعاً' : 'Best Seller';
+      card.appendChild(badge);
+    }
+
     const currency = lang === 'ar' ? CONFIG.currencyAr : CONFIG.currencyEn;
     const colorCls = idx % 2 === 0 ? 'c-coral' : 'c-blue';
-    card.innerHTML = `
+    card.innerHTML += `
       <div class="item-top">
         <div class="item-emoji ${colorCls}">🍽️</div>
         <div class="item-name">${lang==='ar'?item.ar:item.en}</div>
@@ -495,6 +693,7 @@ function addToCart(id){
   renderCart();
   showToast(lang==='ar' ? 'اتضاف للسلة ✓' : 'Added to cart ✓');
 }
+
 function changeQty(id, delta){
   if(!cart[id]) return;
   cart[id] += delta;
@@ -502,15 +701,25 @@ function changeQty(id, delta){
   renderCart();
 }
 
+function changeCustomQty(index, delta) {
+  customItems[index].qty += delta;
+  if (customItems[index].qty <= 0) {
+    customItems.splice(index, 1);
+  }
+  renderCart();
+}
+
 function cartCountTotal(){
-  return Object.values(cart).reduce((a,b)=>a+b,0);
+  return Object.values(cart).reduce((a,b)=>a+b,0) + customItems.reduce((a,b)=>a+b.qty,0);
 }
 
 function computeSubtotal(){
-  return Object.entries(cart).reduce((sum,[id,qty])=>{
+  const menuSubtotal = Object.entries(cart).reduce((sum,[id,qty])=>{
     const item = MENU.find(m=>m.id == id);
     return sum + (item ? item.price * qty : 0);
   }, 0);
+  const customSubtotal = customItems.reduce((sum, item)=> sum + (item.price * item.qty), 0);
+  return menuSubtotal + customSubtotal;
 }
 
 function computeDeliveryFee(){
@@ -524,10 +733,11 @@ function renderCart(){
   const entries = Object.entries(cart);
   const currency = lang === 'ar' ? CONFIG.currencyAr : CONFIG.currencyEn;
 
-  if(entries.length === 0){
+  if(entries.length === 0 && customItems.length === 0){
     wrap.innerHTML = `<div class="empty-cart">${lang==='ar' ? 'السلة فاضية لسه، تصفح المنيو وابدأ طلبك' : 'Your cart is empty — browse the menu to begin'}</div>`;
   } else {
     wrap.innerHTML = '';
+    
     entries.forEach(([id, qty], idx)=>{
       const item = MENU.find(m=>m.id == id);
       if(!item) return;
@@ -549,6 +759,27 @@ function renderCart(){
       row.querySelector('[data-act="plus"]').onclick = ()=>changeQty(item.id,1);
       wrap.appendChild(row);
     });
+
+    customItems.forEach((item, idx) => {
+      const row = document.createElement('div');
+      row.className = 'cart-item';
+      row.style.borderInlineStart = '4px solid var(--coral)';
+      row.style.paddingInlineStart = '8px';
+      row.innerHTML = `
+        <div class="item-emoji c-coral">✨</div>
+        <div class="cart-item-info">
+          <b>${item.name}</b>
+          <span class="nums">${item.price > 0 ? item.price + ' ' + currency : (lang==='ar'?'سيحدد لاحقًا':'TBD')}</span>
+        </div>
+        <div class="qty-ctrl">
+          <button type="button" data-act="minus">−</button>
+          <b class="nums">${item.qty}</b>
+          <button type="button" data-act="plus">+</button>
+        </div>`;
+      row.querySelector('[data-act="minus"]').onclick = () => changeCustomQty(idx, -1);
+      row.querySelector('[data-act="plus"]').onclick = () => changeCustomQty(idx, 1);
+      wrap.appendChild(row);
+    });
   }
 
   const subtotal = computeSubtotal();
@@ -562,8 +793,51 @@ function renderCart(){
   document.getElementById('tTax').textContent = `${tax.toFixed(2)} ${currency}`;
   document.getElementById('tGrand').textContent = `${grand.toFixed(2)} ${currency}`;
 
-  document.getElementById('placeOrderBtn').disabled = entries.length === 0;
+  const alertBox = document.getElementById('minOrderAlert');
+  const placeBtn = document.getElementById('placeOrderBtn');
+  
+  if(subtotal > 0 && subtotal < CONFIG.minOrderLimit) {
+    const diff = CONFIG.minOrderLimit - subtotal;
+    alertBox.textContent = lang === 'ar' 
+      ? `⚠️ الحد الأدنى للطلب هو ${CONFIG.minOrderLimit} ج.م. باقي لك ${diff.toFixed(2)} ج.م لتتمكن من الطلب.`
+      : `⚠️ Minimum order is ${CONFIG.minOrderLimit} EGP. Add ${diff.toFixed(2)} EGP more to checkout.`;
+    alertBox.classList.add('show');
+    placeBtn.disabled = true;
+  } else {
+    alertBox.classList.remove('show');
+    placeBtn.disabled = (entries.length === 0 && customItems.length === 0);
+  }
 }
+
+document.getElementById('toggleCustomBoxBtn').onclick = () => {
+  document.getElementById('mainCustomBox').classList.toggle('show');
+};
+
+document.getElementById('addCustomItemBtn').onclick = () => {
+  const nameInput = document.getElementById('customItemName');
+  const priceInput = document.getElementById('customItemPrice');
+  
+  const name = nameInput.value.trim();
+  const price = parseFloat(priceInput.value) || 0;
+  
+  if (!name) {
+    showToast(lang === 'ar' ? 'من فضلك اكتب اسم الصنف المخصص' : 'Please enter custom item name');
+    return;
+  }
+  
+  customItems.push({
+    name: name,
+    price: price,
+    qty: 1
+  });
+  
+  nameInput.value = '';
+  priceInput.value = '';
+  document.getElementById('mainCustomBox').classList.remove('show');
+  
+  renderCart();
+  showToast(lang === 'ar' ? 'تم إضافة الصنف المخصص للسلة ✓' : 'Custom item added to cart ✓');
+};
 
 function distanceKm(lat1, lon1, lat2, lon2){
   const R = 6371;
@@ -580,32 +854,32 @@ function setDeliveryStatus(text){
 
 document.getElementById('locateBtn').onclick = ()=>{
   if(!navigator.geolocation){
-    setDeliveryStatus(lang==='ar' ? 'المتصفح مش بيدعم تحديد الموقع، استخدم الإدخال اليدوي' : 'Geolocation not supported, please enter distance manually');
+    setDeliveryStatus(lang==='ar' ? 'المتصفح لا يدعم التحديد التلقائي' : 'Geolocation not supported');
     return;
   }
-  setDeliveryStatus(lang==='ar' ? 'بنحدد موقعك...' : 'Locating you...');
+  setDeliveryStatus(lang==='ar' ? 'جاري تحديد موقعك الفعلي عبر الـ GPS...' : 'Locating you via GPS...');
+  
   navigator.geolocation.getCurrentPosition(
     (pos)=>{
+      detectedCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
       const d = distanceKm(CONFIG.kitchenLocation.lat, CONFIG.kitchenLocation.lng, pos.coords.latitude, pos.coords.longitude);
       deliveryDistanceKm = d;
       document.getElementById('manualKm').value = d.toFixed(1);
-      setDeliveryStatus(
-        (lang==='ar' ? `المسافة تقريبًا ${d.toFixed(1)} كم من المطبخ` : `Approx. ${d.toFixed(1)} km from the kitchen`)
-      );
+      setDeliveryStatus(lang==='ar' ? `تم تحديد موقعك! المسافة: ${d.toFixed(1)} كم` : `Location set! Distance: ${d.toFixed(1)} km`);
       renderCart();
     },
-    ()=>{
-      setDeliveryStatus(lang==='ar' ? 'مقدرناش نوصل لموقعك، اكتب المسافة يدوي تحت' : "Couldn't access your location, enter distance manually below");
-    }
+    (err)=>{
+      console.warn("GPS Error:", err);
+      setDeliveryStatus(lang==='ar' ? 'مقدرناش نوصل للموقع تلقائي، يرجى لصق رابط الخريطة أو كتابة الكيلومترات' : "GPS failed, please paste link or enter km manually");
+    },
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
   );
 };
 
 document.getElementById('manualKm').addEventListener('input', (e)=>{
   const v = parseFloat(e.target.value);
   deliveryDistanceKm = isNaN(v) ? null : v;
-  setDeliveryStatus(isNaN(v)
-    ? (lang==='ar' ? 'مفيش موقع محدد لسه' : 'No location set yet')
-    : (lang==='ar' ? `المسافة المدخلة: ${v} كم` : `Entered distance: ${v} km`));
+  setDeliveryStatus(isNaN(v) ? '' : (lang==='ar' ? `المسافة: ${v} كم` : `Distance: ${v} km`));
   renderCart();
 });
 
@@ -638,82 +912,93 @@ document.getElementById('placeOrderBtn').onclick = async ()=>{
   const phone = document.getElementById('custPhone').value.trim();
   const address = document.getElementById('custAddress').value.trim();
   const note = document.getElementById('orderNote').value.trim();
+  const preTime = document.getElementById('preOrderTime').value;
+  const mapsUrl = document.getElementById('googleMapsUrl').value.trim();
   const payMethod = document.querySelector('input[name="pay"]:checked').value;
-  const currency = lang === 'ar' ? CONFIG.currencyAr : CONFIG.currencyEn;
 
-  if(Object.keys(cart).length === 0) return;
-  if(!name || !phone || !address){
-    showToast(lang==='ar' ? 'من فضلك اكتب الاسم والموبايل والعنوان' : 'Please fill in name, phone and address');
+  if(!name || !phone || !address || !preTime){
+    showToast(lang==='ar' ? 'من فضلك املأ البيانات وحدد وقت الاستلام' : 'Please fill all fields and delivery time');
     return;
   }
 
   const subtotal = computeSubtotal();
+  if (subtotal < CONFIG.minOrderLimit) return;
+
   const deliveryFee = computeDeliveryFee();
   const tax = (subtotal + deliveryFee) * CONFIG.taxRate;
   const grand = subtotal + deliveryFee + tax;
 
   const orderItems = Object.entries(cart).map(([id,qty])=>{
     const item = MENU.find(m=>m.id == id);
-    return item ? { id:item.id, ar:item.ar, en:item.en, price:item.price, qty } : null;
+    return item ? { id:item.id, ar:item.ar, en:item.en, price:item.price, qty, type: 'standard' } : null;
   }).filter(Boolean);
+
+  customItems.forEach(item => {
+    orderItems.push({
+      id: 'custom_' + Date.now(),
+      ar: item.name,
+      en: item.name,
+      price: item.price,
+      qty: item.qty,
+      type: 'custom'
+    });
+  });
 
   const placeBtn = document.getElementById('placeOrderBtn');
   placeBtn.disabled = true;
 
   let orderId = null;
+  let orderNumber = null;
   let trackingUrl = '';
+  
+  let finalGeoUrl = mapsUrl;
+  if(!finalGeoUrl && detectedCoords) {
+    finalGeoUrl = `https://www.google.com/maps?q=${detectedCoords.lat},${detectedCoords.lng}`;
+  }
+
   try{
+    const counterRef = ref(db, 'counters/orderNumber');
+    const counterResult = await runTransaction(counterRef, (current)=> (current || 1000) + 1);
+    orderNumber = counterResult.snapshot.val();
+
     const ordersRef = ref(db, 'orders');
     const newOrderRef = push(ordersRef);
     orderId = newOrderRef.key;
     await set(newOrderRef, {
+      orderNumber,
       items: orderItems,
       subtotal, deliveryFee, tax, total: grand,
       distanceKm: deliveryDistanceKm,
-      note, payMethod,
+      mapsUrl: finalGeoUrl,
+      note, payMethod, deliveryTimeTarget: preTime,
       customerName: name, customerPhone: phone, customerAddress: address,
       status: 'received',
       createdAt: serverTimestamp()
     });
+    await set(ref(db, 'orderLookup/' + orderNumber), orderId);
     trackingUrl = new URL('tracking.html', window.location.href).href + '?id=' + orderId;
   }catch(err){
-    console.error('Firebase error:', err);
-    showToast(lang==='ar' ? 'حصل خطأ في حفظ الطلب، هيتبعت على واتساب برضو' : 'Could not save the order, but it will still be sent via WhatsApp');
+    console.error(err);
+    showToast(lang==='ar' ? 'حدث خطأ أثناء حفظ الطلب' : 'Error saving order');
+    placeBtn.disabled = false;
+    return;
   }
 
-  const lines = [];
-  lines.push(lang==='ar' ? `طلب جديد من ${CONFIG.businessNameAr}` : `New order — ${CONFIG.businessNameEn}`);
-  lines.push('');
-  orderItems.forEach(item=>{
-    lines.push(`${item.qty} × ${lang==='ar'?item.ar:item.en} — ${(item.price*item.qty).toFixed(2)} ${currency}`);
-  });
-  lines.push('');
-  lines.push(`${lang==='ar'?'الإجمالي الفرعي':'Subtotal'}: ${subtotal.toFixed(2)} ${currency}`);
-  lines.push(`${lang==='ar'?'رسوم التوصيل':'Delivery'} (${deliveryDistanceKm!==null? deliveryDistanceKm.toFixed(1):'0'} km): ${deliveryFee.toFixed(2)} ${currency}`);
-  lines.push(`${lang==='ar'?'الضريبة':'Tax'}: ${tax.toFixed(2)} ${currency}`);
-  lines.push(`${lang==='ar'?'الإجمالي الكلي':'Total'}: ${grand.toFixed(2)} ${currency}`);
-  lines.push('');
-  if(note) lines.push(`${lang==='ar'?'ملاحظة':'Note'}: ${note}`);
-  lines.push(`${lang==='ar'?'طريقة الدفع':'Payment'}: ${payMethod==='cash' ? (lang==='ar'?'كاش عند الاستلام':'Cash on delivery') : (lang==='ar'?'فيزا عند الاستلام':'Card on delivery')}`);
-  lines.push('');
-  lines.push(`${lang==='ar'?'الاسم':'Name'}: ${name}`);
-  lines.push(`${lang==='ar'?'الموبايل':'Phone'}: ${phone}`);
-  lines.push(`${lang==='ar'?'العنوان':'Address'}: ${address}`);
-  if(trackingUrl){
-    lines.push('');
-    lines.push(`${lang==='ar'?'تابع حالة طلبك من هنا':'Track your order here'}: ${trackingUrl}`);
-  }
-
-  const message = encodeURIComponent(lines.join('\n'));
-  const url = `https://wa.me/${CONFIG.whatsappNumber}?text=${message}`;
-  window.open(url, '_blank');
   placeBtn.disabled = false;
+
+  if(orderNumber){
+    document.getElementById('confirmNumber').textContent = '#' + orderNumber;
+    document.getElementById('confirmTrackLink').href = trackingUrl || '#';
+    document.getElementById('confirmOverlay').classList.add('show');
+    cart = {}; customItems = []; 
+    document.getElementById('orderNote').value = '';
+    document.getElementById('googleMapsUrl').value = '';
+    renderCart(); closeDrawer();
+  }
 };
 
-document.getElementById('langToggle').onclick = ()=>{
-  lang = lang === 'ar' ? 'en' : 'ar';
-  applyLang();
-};
+document.getElementById('confirmCloseBtn').onclick = ()=> document.getElementById('confirmOverlay').classList.remove('show');
+document.getElementById('langToggle').onclick = ()=>{ lang = lang === 'ar' ? 'en' : 'ar'; applyLang(); };
 
 applyLang();
 </script>
