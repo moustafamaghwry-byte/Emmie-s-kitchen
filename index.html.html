@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مطبخ إيمي | Emmie's Kitchen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --coral:#F0796B;
+    --coral-dark:#DA5D4F;
+    --coral-light:#FDDCD3;
+    --blue:#4F739E;
+    --blue-dark:#3B5878;
+    --blue-light:#DDE6F0;
+    --peach:#FDEEDD;
+    --cream:#FFFBF5;
+    --ink:#4A3226;
+    --ink-soft:#8A7364;
+    --line:#F1DFCB;
+    --radius:20px;
+    --shadow:0 14px 34px rgba(74,50,38,.10);
+    font-size:16px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'Cairo',sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  img,svg{display:block;max-width:100%;}
+  button{font-family:inherit;cursor:pointer;}
+  a{color:inherit;}
+  h1,h2,h3{margin:0;font-weight:900;}
+  p{margin:0;}
+  .nums{font-family:'IBM Plex Mono',monospace;letter-spacing:.02em;font-variant-numeric:tabular-nums;}
+  :focus-visible{outline:3px solid var(--coral);outline-offset:2px;border-radius:6px;}
+  @media (prefers-reduced-motion: reduce){*{animation-duration:.001ms !important;transition-duration:.001ms !important;}}
+
+  /* ===== Header ===== */
+  header.site{
+    position:sticky;top:0;z-index:40;
+    background:rgba(255,251,245,.92);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .site-bar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 20px;max-width:1120px;margin:0 auto;
+  }
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand-mark{
+    width:44px;height:44px;border-radius:50%;flex:none;overflow:hidden;
+    box-shadow:0 4px 12px rgba(74,50,38,.18);
+  }
+  .brand-mark img{width:100%;height:100%;object-fit:cover;}
+  .brand-name{font-weight:800;font-size:1.15rem;color:var(--ink);}
+  .bar-actions{display:flex;align-items:center;gap:10px;}
+  .btn-ghost{
+    background:var(--cream);border:1.5px solid var(--blue);color:var(--blue-dark);
+    padding:9px 16px;border-radius:999px;font-weight:700;font-size:.85rem;
+  }
+  .btn-ghost:hover{background:var(--blue);color:#fff;}
+  .cart-btn{
+    position:relative;background:var(--coral);color:#fff;border:none;
+    padding:10px 18px;border-radius:999px;font-weight:700;font-size:.85rem;
+    display:flex;align-items:center;gap:8px;
+  }
+  .cart-btn:hover{background:var(--coral-dark);}
+  .cart-count{
+    background:#fff;color:var(--coral-dark);border-radius:999px;
+    min-width:20px;height:20px;font-size:.72rem;display:flex;align-items:center;
+    justify-content:center;padding:0 5px;font-weight:800;
+  }
+
+  /* ===== Hero ===== */
+  .hero{position:relative;overflow:hidden;padding:56px 20px 60px;}
+  .hero-inner{
+    max-width:1120px;margin:0 auto;display:grid;grid-template-columns:1.05fr .95fr;
+    gap:40px;align-items:center;position:relative;z-index:2;
+  }
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;color:var(--coral-dark);
+    font-weight:800;font-size:.82rem;letter-spacing:.04em;
+    background:var(--coral-light);padding:6px 14px;border-radius:999px;margin-bottom:16px;
+  }
+  .hero h1{font-size:2.7rem;line-height:1.2;margin-bottom:16px;color:var(--ink);}
+  .hero h1 span{color:var(--coral);}
+  .hero p.lead{font-size:1.06rem;color:var(--ink-soft);max-width:46ch;margin-bottom:26px;}
+  .hero-ctas{display:flex;gap:12px;flex-wrap:wrap;}
+  .btn-primary{
+    background:var(--coral);color:#fff;border:none;padding:15px 28px;
+    border-radius:999px;font-weight:800;font-size:.98rem;box-shadow:0 10px 24px rgba(240,121,107,.35);
+  }
+  .btn-primary:hover{background:var(--coral-dark);}
+  .btn-secondary{
+    background:#fff;color:var(--blue-dark);border:1.5px solid var(--blue);
+    padding:15px 28px;border-radius:999px;font-weight:800;font-size:.98rem;
+  }
+  .btn-secondary:hover{background:var(--blue);color:#fff;}
+
+  .hero-visual{position:relative;display:flex;align-items:center;justify-content:center;}
+  .blob{position:absolute;border-radius:62% 38% 55% 45% / 45% 55% 42% 58%;}
+  .blob-coral{width:300px;height:300px;background:var(--coral-light);top:-10px;inset-inline-start:6%;opacity:.9;}
+  .blob-blue{width:220px;height:220px;background:var(--blue-light);bottom:-10px;inset-inline-end:8%;opacity:.9;
+    border-radius:45% 55% 42% 58% / 55% 45% 58% 42%;}
+  .hero-logo{
+    position:relative;z-index:2;width:min(340px,80%);border-radius:50%;
+    box-shadow:0 20px 44px rgba(74,50,38,.22);border:6px solid #fff;
+  }
+
+  /* ===== Trust strip ===== */
+  .trust-strip{max-width:1120px;margin:0 auto;padding:0 20px 10px;}
+  .trust-card{
+    background:#fff;border-radius:999px;padding:18px 30px;display:flex;align-items:center;
+    justify-content:center;gap:22px;flex-wrap:wrap;box-shadow:var(--shadow);
+  }
+  .trust-card h2{font-size:1.15rem;color:var(--ink);}
+  .trust-pillars{display:flex;align-items:center;gap:14px;color:var(--ink-soft);font-weight:700;font-size:.92rem;}
+  .trust-pillars .pillar{color:var(--coral-dark);}
+  .trust-pillars .dot{width:5px;height:5px;border-radius:50%;background:var(--blue);}
+
+  /* ===== Menu ===== */
+  .menu{padding:60px 20px 70px;}
+  .section-head{max-width:1120px;margin:0 auto 8px;text-align:center;}
+  .section-head .eyebrow{margin-bottom:12px;}
+  .section-head h2{font-size:2rem;color:var(--ink);}
+  .section-sub{text-align:center;color:var(--ink-soft);font-size:.9rem;max-width:1120px;margin:8px auto 30px;}
+
+  .tabs{display:flex;gap:10px;max-width:1120px;margin:0 auto 30px;flex-wrap:wrap;justify-content:center;}
+  .tab{
+    background:#fff;border:1.5px solid var(--line);color:var(--ink-soft);
+    padding:9px 20px;border-radius:999px;font-weight:700;font-size:.86rem;
+  }
+  .tab.active{background:var(--coral);border-color:var(--coral);color:#fff;}
+
+  .grid{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;}
+  .item-card{
+    background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+    padding:20px;display:flex;flex-direction:column;gap:10px;transition:transform .15s, box-shadow .15s;
+  }
+  .item-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);}
+  .item-top{display:flex;align-items:center;gap:12px;}
+  .item-emoji{
+    width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;
+    font-size:1.5rem;flex:none;
+  }
+  .item-emoji.c-coral{background:var(--coral-light);}
+  .item-emoji.c-blue{background:var(--blue-light);}
+  .item-name{font-weight:800;font-size:1.02rem;color:var(--ink);}
+  .item-desc{color:var(--ink-soft);font-size:.85rem;min-height:2.3em;}
+  .item-foot{display:flex;align-items:center;justify-content:space-between;margin-top:4px;}
+  .item-price{font-weight:800;color:var(--coral-dark);font-size:1.02rem;}
+  .add-btn{
+    background:var(--blue);color:#fff;border:none;border-radius:999px;
+    padding:9px 18px;font-weight:700;font-size:.85rem;
+  }
+  .add-btn:hover{background:var(--blue-dark);}
+
+  /* ===== Cart drawer ===== */
+  .overlay{position:fixed;inset:0;background:rgba(74,50,38,.4);z-index:60;opacity:0;pointer-events:none;transition:opacity .25s;}
+  .overlay.show{opacity:1;pointer-events:auto;}
+  .drawer{
+    position:fixed;top:0;bottom:0;inset-inline-end:0;width:min(430px,100%);
+    background:var(--cream);z-index:70;box-shadow:-10px 0 30px rgba(0,0,0,.15);
+    transform:translateX(110%);transition:transform .3s ease;display:flex;flex-direction:column;
+  }
+  [dir="rtl"] .drawer{transform:translateX(-110%);}
+  .drawer.open{transform:translateX(0);}
+  .drawer-head{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;background:#fff;}
+  .drawer-head h3{font-size:1.15rem;color:var(--ink);}
+  .close-btn{background:none;border:none;font-size:1.3rem;color:var(--ink-soft);padding:4px 8px;}
+  .drawer-body{padding:16px 20px;overflow-y:auto;flex:1;}
+  .empty-cart{text-align:center;color:var(--ink-soft);padding:50px 10px;font-size:.92rem;}
+  .cart-item{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);}
+  .cart-item .item-emoji{width:44px;height:44px;font-size:1.2rem;border-radius:12px;}
+  .cart-item-info{flex:1;min-width:0;}
+  .cart-item-info b{font-size:.92rem;display:block;color:var(--ink);}
+  .cart-item-info span{font-size:.8rem;color:var(--coral-dark);}
+  .qty-ctrl{display:flex;align-items:center;gap:6px;}
+  .qty-ctrl button{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--line);background:#fff;font-weight:800;line-height:1;}
+  .qty-ctrl b{min-width:18px;text-align:center;font-size:.9rem;}
+  .field{margin-top:16px;}
+  .field label{display:block;font-weight:700;font-size:.86rem;margin-bottom:6px;color:var(--ink);}
+  .field input, .field textarea, .field select{
+    width:100%;padding:11px 14px;border-radius:14px;border:1.5px solid var(--line);
+    background:#fff;font-family:inherit;font-size:.92rem;color:var(--ink);
+  }
+  .field input:focus, .field textarea:focus{border-color:var(--coral);}
+  .field textarea{resize:vertical;min-height:64px;}
+  .hint{font-size:.76rem;color:var(--ink-soft);margin-top:4px;}
+  .divider{border:none;border-top:1px dashed var(--line);margin:18px 0;}
+  .delivery-box{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;}
+  .delivery-row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;}
+  .locate-btn{background:var(--blue);color:#fff;border:none;border-radius:999px;padding:8px 14px;font-weight:800;font-size:.82rem;flex:none;}
+  .locate-btn:hover{background:var(--blue-dark);}
+  .delivery-status{font-size:.8rem;color:var(--ink-soft);margin-top:8px;}
+  .pay-options{display:flex;gap:10px;margin-top:6px;}
+  .pay-option{flex:1;border:1.5px solid var(--line);background:#fff;border-radius:14px;padding:10px;text-align:center;font-weight:700;font-size:.85rem;position:relative;}
+  .pay-option input{position:absolute;opacity:0;inset:0;cursor:pointer;margin:0;}
+  .pay-option.selected{border-color:var(--coral);background:var(--coral-light);color:var(--coral-dark);}
+  .totals-box{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;margin-top:14px;}
+  .totals-row{display:flex;justify-content:space-between;font-size:.88rem;padding:4px 0;color:var(--ink-soft);}
+  .totals-row.grand{border-top:2px dashed var(--line);margin-top:6px;padding-top:10px;font-weight:800;font-size:1.08rem;color:var(--coral-dark);}
+  .drawer-foot{padding:16px 20px 22px;border-top:1px solid var(--line);background:#fff;}
+  .place-order-btn{
+    width:100%;background:var(--coral);color:#fff;border:none;padding:15px;
+    border-radius:999px;font-weight:800;font-size:1rem;display:flex;align-items:center;justify-content:center;gap:8px;
+  }
+  .place-order-btn:hover{background:var(--coral-dark);}
+  .place-order-btn:disabled{background:#DCCFC2;cursor:not-allowed;}
+
+  .toast{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--ink);color:#fff;padding:12px 22px;border-radius:999px;
+    font-weight:700;font-size:.88rem;opacity:0;pointer-events:none;transition:all .25s;z-index:90;box-shadow:var(--shadow);
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  footer{padding:34px 20px;text-align:center;color:var(--ink-soft);font-size:.85rem;}
+  .footer-brand{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px;}
+  .footer-brand img{width:26px;height:26px;border-radius:50%;}
+
+  @media (max-width:860px){
+    .hero-inner{grid-template-columns:1fr;}
+    .hero h1{font-size:2.1rem;}
+    .hero-visual{order:-1;}
+    .blob-coral{width:220px;height:220px;}
+    .blob-blue{width:160px;height:160px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="site-bar">
+    <div class="brand">
+      <div class="brand-mark"><img src="logo.png" alt="مطبخ إيمي"></div>
+      <div class="brand-name" data-ar="مطبخ إيمي" data-en="Emmie's Kitchen">مطبخ إيمي</div>
+    </div>
+    <div class="bar-actions">
+      <button class="btn-ghost" id="langToggle" type="button">EN</button>
+      <button class="cart-btn" id="openCartBtn" type="button">
+        <span data-ar="السلة" data-en="Cart">السلة</span>
+        <span class="cart-count nums" id="cartCount">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="eyebrow" data-ar="ضيافة تليق بالملوك" data-en="Hospitality fit for kings">ضيافة تليق بالملوك</div>
+      <h1>
+        <span data-ar="طعم البيت" data-en="The taste of home,">طعم البيت</span><br>
+        <span data-ar="يوصل إلى الملوك" data-en="worthy of kings">يوصل إلى الملوك</span>
+      </h1>
+      <p class="lead" data-ar="أطباق بتتعمل بالطلب بمكونات طازة، من مطبخي لبيتك. اختار طبقك، اكتب ملاحظاتك، وإحنا نتكفل بالباقي."
+         data-en="Dishes made to order with fresh ingredients, from my kitchen to yours. Pick your dish, add a note, and we'll take care of the rest.">
+        أطباق بتتعمل بالطلب بمكونات طازة، من مطبخي لبيتك. اختار طبقك، اكتب ملاحظاتك، وإحنا نتكفل بالباقي.
+      </p>
+      <div class="hero-ctas">
+        <button class="btn-primary" onclick="document.getElementById('menuTop').scrollIntoView({behavior:'smooth'})" data-ar="اطلب دلوقتي" data-en="Order now">اطلب دلوقتي</button>
+        <button class="btn-secondary" id="openCartBtn2" data-ar="شوف السلة" data-en="View cart">شوف السلة</button>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="blob blob-coral"></div>
+      <div class="blob blob-blue"></div>
+      <img class="hero-logo" src="logo.png" alt="مطبخ إيمي">
+    </div>
+  </div>
+</section>
+
+<section class="trust-strip">
+  <div class="trust-card">
+    <h2 data-ar="أنت تستحق الأفضل" data-en="You deserve the best">أنت تستحق الأفضل</h2>
+    <div class="trust-pillars">
+      <span class="pillar" data-ar="جودة" data-en="Quality">جودة</span>
+      <span class="dot"></span>
+      <span class="pillar" data-ar="طعم" data-en="Taste">طعم</span>
+      <span class="dot"></span>
+      <span class="pillar" data-ar="ثقة" data-en="Trust">ثقة</span>
+    </div>
+  </div>
+</section>
+
+<section class="menu" id="menuTop">
+  <div class="section-head">
+    <div class="eyebrow" data-ar="المنيو" data-en="The Menu">المنيو</div>
+    <h2 data-ar="أطباقنا" data-en="Our Dishes">أطباقنا</h2>
+  </div>
+  <p class="section-sub" data-ar="الأسعار بالجنيه المصري" data-en="Prices in Egyptian Pounds">الأسعار بالجنيه المصري</p>
+  <div class="tabs" id="tabs"></div>
+  <div class="grid" id="menuGrid"></div>
+</section>
+
+<footer>
+  <div class="footer-brand"><img src="logo.png" alt="مطبخ إيمي"><strong data-ar="مطبخ إيمي" data-en="Emmie's Kitchen">مطبخ إيمي</strong></div>
+  <p data-ar="طعم البيت، لحد باب بيتك 🏡" data-en="The taste of home, delivered to your door 🏡">طعم البيت، لحد باب بيتك 🏡</p>
+</footer>
+
+<div class="overlay" id="overlay"></div>
+<aside class="drawer" id="drawer" aria-label="Shopping cart">
+  <div class="drawer-head">
+    <h3 data-ar="طلبك" data-en="Your Order">طلبك</h3>
+    <button class="close-btn" id="closeCartBtn" aria-label="close">✕</button>
+  </div>
+  <div class="drawer-body" id="drawerBody">
+
+    <div id="cartItemsWrap"></div>
+
+    <div class="field">
+      <label data-ar="ملاحظة على الطلب (اختياري)" data-en="Order note (optional)">ملاحظة على الطلب (اختياري)</label>
+      <textarea id="orderNote" data-ar-ph="مثال: من غير بصل، أو زوّد شطة..." data-en-ph="e.g. no onions, extra chili..." placeholder="مثال: من غير بصل، أو زوّد شطة..."></textarea>
+    </div>
+
+    <hr class="divider">
+
+    <div class="field">
+      <label data-ar="الاسم" data-en="Name">الاسم</label>
+      <input type="text" id="custName" data-ar-ph="اسمك" data-en-ph="Your name" placeholder="اسمك">
+    </div>
+    <div class="field">
+      <label data-ar="رقم الموبايل" data-en="Phone number">رقم الموبايل</label>
+      <input type="tel" id="custPhone" data-ar-ph="01xxxxxxxxx" data-en-ph="01xxxxxxxxx" placeholder="01xxxxxxxxx">
+    </div>
+    <div class="field">
+      <label data-ar="العنوان بالتفصيل" data-en="Delivery address">العنوان بالتفصيل</label>
+      <textarea id="custAddress" data-ar-ph="الحي، الشارع، رقم العمارة، علامة مميزة..." data-en-ph="Area, street, building no., landmark..." placeholder="الحي، الشارع، رقم العمارة، علامة مميزة..."></textarea>
+    </div>
+
+    <hr class="divider">
+
+    <div class="field">
+      <label data-ar="حساب التوصيل" data-en="Delivery calculation">حساب التوصيل</label>
+      <div class="delivery-box">
+        <div class="delivery-row">
+          <span style="font-size:.85rem" data-ar="حدد موقعك عشان نحسب التوصيل بالمسافة" data-en="Share your location to calculate delivery by distance">حدد موقعك عشان نحسب التوصيل بالمسافة</span>
+          <button class="locate-btn" id="locateBtn" type="button" data-ar="📍 حدد موقعي" data-en="📍 Use my location">📍 حدد موقعي</button>
+        </div>
+        <div class="delivery-status" id="deliveryStatus" data-ar="مفيش موقع محدد لسه" data-en="No location set yet">مفيش موقع محدد لسه</div>
+        <div class="field" style="margin-top:10px;">
+          <label style="font-weight:600;font-size:.8rem" data-ar="أو أدخل المسافة يدوي (كم)" data-en="Or enter distance manually (km)">أو أدخل المسافة يدوي (كم)</label>
+          <input type="number" id="manualKm" min="0" step="0.1" data-ar-ph="مثال: 5" data-en-ph="e.g. 5" placeholder="مثال: 5">
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label data-ar="طريقة الدفع" data-en="Payment method">طريقة الدفع</label>
+      <div class="pay-options">
+        <label class="pay-option selected" id="payCashLabel">
+          <input type="radio" name="pay" value="cash" checked>
+          <span data-ar="كاش عند الاستلام" data-en="Cash on delivery">كاش عند الاستلام</span>
+        </label>
+        <label class="pay-option" id="payCardLabel">
+          <input type="radio" name="pay" value="card">
+          <span data-ar="فيزا عند الاستلام" data-en="Card on delivery">فيزا عند الاستلام</span>
+        </label>
+      </div>
+      <p class="hint" data-ar="الدفع بالفيزا بيتم من خلال ماكينة محمولة وقت التسليم" data-en="Card payment is collected via a portable POS machine at delivery">الدفع بالفيزا بيتم من خلال ماكينة محمولة وقت التسليم</p>
+    </div>
+
+    <div class="totals-box">
+      <div class="totals-row"><span data-ar="الإجمالي الفرعي" data-en="Subtotal">الإجمالي الفرعي</span><span class="nums" id="tSubtotal">0.00</span></div>
+      <div class="totals-row"><span data-ar="رسوم التوصيل" data-en="Delivery fee">رسوم التوصيل</span><span class="nums" id="tDelivery">0.00</span></div>
+      <div class="totals-row"><span data-ar="الضريبة" data-en="Tax">الضريبة</span><span class="nums" id="tTax">0.00</span></div>
+      <div class="totals-row grand"><span data-ar="الإجمالي الكلي" data-en="Total">الإجمالي الكلي</span><span class="nums" id="tGrand">0.00</span></div>
+    </div>
+
+  </div>
+  <div class="drawer-foot">
+    <button class="place-order-btn" id="placeOrderBtn" type="button">
+      <span data-ar="إرسال الطلب عبر واتساب" data-en="Send order via WhatsApp">إرسال الطلب عبر واتساب</span> 📲
+    </button>
+    <p class="hint" style="text-align:center;margin-top:8px" data-ar="هيتفتح واتساب برسالة جاهزة فيها تفاصيل طلبك للتأكيد" data-en="WhatsApp will open with a ready message containing your order details for confirmation">هيتفتح واتساب برسالة جاهزة فيها تفاصيل طلبك للتأكيد</p>
+  </div>
+</aside>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+/* ==================== Firebase ==================== */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, push, set, onValue, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA8h_w_JvoPV1PA5QFHJg_nAInFLCSEw9Y",
+  authDomain: "emmie-s-kitchen.firebaseapp.com",
+  databaseURL: "https://emmie-s-kitchen-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "emmie-s-kitchen",
+  storageBucket: "emmie-s-kitchen.firebasestorage.app",
+  messagingSenderId: "381764506540",
+  appId: "1:381764506540:web:58ee94ef5992661f1aa009"
+};
+const fbApp = initializeApp(firebaseConfig);
+const db = getDatabase(fbApp);
+
+const CONFIG = {
+  businessNameAr: "مطبخ إيمي",
+  businessNameEn: "Emmie's Kitchen",
+  whatsappNumber: "201158899779",
+  currencyAr: "ج.م",
+  currencyEn: "EGP",
+  kitchenLocation: { lat: 30.0626, lng: 31.3219 },
+  deliveryBaseFee: 15,
+  deliveryRatePerKm: 4,
+  taxRate: 0.14
+};
+
+/* قائمة الأصناف — بتتحمل لحظيًا من Firebase (تقدر تضيف/تعدّل/تحذف من صفحة admin.html) */
+let MENU = [];
+onValue(ref(db, 'menu'), (snapshot)=>{
+  const data = snapshot.val() || {};
+  MENU = Object.entries(data)
+    .map(([id, item])=>({ id, ...item }))
+    .filter(item => item.available !== false);
+  renderMenu();
+});
+
+const CATEGORIES = [
+  { key:'all', ar:"الكل", en:"All" },
+  { key:'appetizers', ar:"مقبلات", en:"Appetizers" },
+  { key:'mains', ar:"أطباق رئيسية", en:"Main Dishes" },
+  { key:'desserts', ar:"حلويات", en:"Desserts" },
+  { key:'drinks', ar:"مشروبات", en:"Drinks" }
+];
+
+let lang = 'ar';
+let activeCat = 'all';
+let cart = {};
+let deliveryDistanceKm = null;
+
+function applyLang(){
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+  document.getElementById('langToggle').textContent = lang === 'ar' ? 'EN' : 'AR';
+  document.querySelectorAll('[data-ar]').forEach(el=>{
+    const val = lang === 'ar' ? el.getAttribute('data-ar') : el.getAttribute('data-en');
+    if(val !== null) el.textContent = val;
+  });
+  document.querySelectorAll('[data-ar-ph]').forEach(el=>{
+    const val = lang === 'ar' ? el.getAttribute('data-ar-ph') : el.getAttribute('data-en-ph');
+    if(val !== null) el.setAttribute('placeholder', val);
+  });
+  renderMenu();
+  renderTabs();
+  renderCart();
+}
+
+function renderTabs(){
+  const box = document.getElementById('tabs');
+  box.innerHTML = '';
+  CATEGORIES.forEach(c=>{
+    const b = document.createElement('button');
+    b.className = 'tab' + (c.key === activeCat ? ' active' : '');
+    b.textContent = lang === 'ar' ? c.ar : c.en;
+    b.onclick = ()=>{ activeCat = c.key; renderTabs(); renderMenu(); };
+    box.appendChild(b);
+  });
+}
+
+function renderMenu(){
+  const grid = document.getElementById('menuGrid');
+  grid.innerHTML = '';
+  const items = MENU.filter(i=> activeCat === 'all' || i.cat === activeCat);
+  items.forEach((item, idx)=>{
+    const card = document.createElement('div');
+    card.className = 'item-card';
+    const currency = lang === 'ar' ? CONFIG.currencyAr : CONFIG.currencyEn;
+    const colorCls = idx % 2 === 0 ? 'c-coral' : 'c-blue';
+    card.innerHTML = `
+      <div class="item-top">
+        <div class="item-emoji ${colorCls}">🍽️</div>
+        <div class="item-name">${lang==='ar'?item.ar:item.en}</div>
+      </div>
+      <div class="item-desc">${lang==='ar'?item.dAr:item.dEn}</div>
+      <div class="item-foot">
+        <div class="item-price nums">${item.price} ${currency}</div>
+        <button class="add-btn" data-id="${item.id}">${lang==='ar'?'إضافة':'Add'}</button>
+      </div>`;
+    card.querySelector('.add-btn').onclick = ()=> addToCart(item.id);
+    grid.appendChild(card);
+  });
+}
+
+function addToCart(id){
+  cart[id] = (cart[id] || 0) + 1;
+  renderCart();
+  showToast(lang==='ar' ? 'اتضاف للسلة ✓' : 'Added to cart ✓');
+}
+function changeQty(id, delta){
+  if(!cart[id]) return;
+  cart[id] += delta;
+  if(cart[id] <= 0) delete cart[id];
+  renderCart();
+}
+
+function cartCountTotal(){
+  return Object.values(cart).reduce((a,b)=>a+b,0);
+}
+
+function computeSubtotal(){
+  return Object.entries(cart).reduce((sum,[id,qty])=>{
+    const item = MENU.find(m=>m.id == id);
+    return sum + (item ? item.price * qty : 0);
+  }, 0);
+}
+
+function computeDeliveryFee(){
+  if(deliveryDistanceKm === null || isNaN(deliveryDistanceKm)) return 0;
+  return CONFIG.deliveryBaseFee + (CONFIG.deliveryRatePerKm * deliveryDistanceKm);
+}
+
+function renderCart(){
+  document.getElementById('cartCount').textContent = cartCountTotal();
+  const wrap = document.getElementById('cartItemsWrap');
+  const entries = Object.entries(cart);
+  const currency = lang === 'ar' ? CONFIG.currencyAr : CONFIG.currencyEn;
+
+  if(entries.length === 0){
+    wrap.innerHTML = `<div class="empty-cart">${lang==='ar' ? 'السلة فاضية لسه، تصفح المنيو وابدأ طلبك' : 'Your cart is empty — browse the menu to begin'}</div>`;
+  } else {
+    wrap.innerHTML = '';
+    entries.forEach(([id, qty], idx)=>{
+      const item = MENU.find(m=>m.id == id);
+      if(!item) return;
+      const colorCls = idx % 2 === 0 ? 'c-coral' : 'c-blue';
+      const row = document.createElement('div');
+      row.className = 'cart-item';
+      row.innerHTML = `
+        <div class="item-emoji ${colorCls}">🍽️</div>
+        <div class="cart-item-info">
+          <b>${lang==='ar'?item.ar:item.en}</b>
+          <span class="nums">${item.price} ${currency}</span>
+        </div>
+        <div class="qty-ctrl">
+          <button type="button" data-act="minus">−</button>
+          <b class="nums">${qty}</b>
+          <button type="button" data-act="plus">+</button>
+        </div>`;
+      row.querySelector('[data-act="minus"]').onclick = ()=>changeQty(item.id,-1);
+      row.querySelector('[data-act="plus"]').onclick = ()=>changeQty(item.id,1);
+      wrap.appendChild(row);
+    });
+  }
+
+  const subtotal = computeSubtotal();
+  const deliveryFee = computeDeliveryFee();
+  const taxableAmount = subtotal + deliveryFee;
+  const tax = subtotal > 0 ? taxableAmount * CONFIG.taxRate : 0;
+  const grand = subtotal > 0 ? taxableAmount + tax : 0;
+
+  document.getElementById('tSubtotal').textContent = `${subtotal.toFixed(2)} ${currency}`;
+  document.getElementById('tDelivery').textContent = `${deliveryFee.toFixed(2)} ${currency}`;
+  document.getElementById('tTax').textContent = `${tax.toFixed(2)} ${currency}`;
+  document.getElementById('tGrand').textContent = `${grand.toFixed(2)} ${currency}`;
+
+  document.getElementById('placeOrderBtn').disabled = entries.length === 0;
+}
+
+function distanceKm(lat1, lon1, lat2, lon2){
+  const R = 6371;
+  const dLat = (lat2-lat1) * Math.PI/180;
+  const dLon = (lon2-lon1) * Math.PI/180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)**2;
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
+}
+
+function setDeliveryStatus(text){
+  document.getElementById('deliveryStatus').textContent = text;
+}
+
+document.getElementById('locateBtn').onclick = ()=>{
+  if(!navigator.geolocation){
+    setDeliveryStatus(lang==='ar' ? 'المتصفح مش بيدعم تحديد الموقع، استخدم الإدخال اليدوي' : 'Geolocation not supported, please enter distance manually');
+    return;
+  }
+  setDeliveryStatus(lang==='ar' ? 'بنحدد موقعك...' : 'Locating you...');
+  navigator.geolocation.getCurrentPosition(
+    (pos)=>{
+      const d = distanceKm(CONFIG.kitchenLocation.lat, CONFIG.kitchenLocation.lng, pos.coords.latitude, pos.coords.longitude);
+      deliveryDistanceKm = d;
+      document.getElementById('manualKm').value = d.toFixed(1);
+      setDeliveryStatus(
+        (lang==='ar' ? `المسافة تقريبًا ${d.toFixed(1)} كم من المطبخ` : `Approx. ${d.toFixed(1)} km from the kitchen`)
+      );
+      renderCart();
+    },
+    ()=>{
+      setDeliveryStatus(lang==='ar' ? 'مقدرناش نوصل لموقعك، اكتب المسافة يدوي تحت' : "Couldn't access your location, enter distance manually below");
+    }
+  );
+};
+
+document.getElementById('manualKm').addEventListener('input', (e)=>{
+  const v = parseFloat(e.target.value);
+  deliveryDistanceKm = isNaN(v) ? null : v;
+  setDeliveryStatus(isNaN(v)
+    ? (lang==='ar' ? 'مفيش موقع محدد لسه' : 'No location set yet')
+    : (lang==='ar' ? `المسافة المدخلة: ${v} كم` : `Entered distance: ${v} km`));
+  renderCart();
+});
+
+document.querySelectorAll('input[name="pay"]').forEach(r=>{
+  r.addEventListener('change', ()=>{
+    document.querySelectorAll('input[name="pay"]').forEach(x=>{
+      document.getElementById(x.value==='cash'?'payCashLabel':'payCardLabel').classList.toggle('selected', x.checked);
+    });
+  });
+});
+
+const drawer = document.getElementById('drawer');
+const overlay = document.getElementById('overlay');
+function openDrawer(){ drawer.classList.add('open'); overlay.classList.add('show'); }
+function closeDrawer(){ drawer.classList.remove('open'); overlay.classList.remove('show'); }
+document.getElementById('openCartBtn').onclick = openDrawer;
+document.getElementById('openCartBtn2').onclick = openDrawer;
+document.getElementById('closeCartBtn').onclick = closeDrawer;
+overlay.onclick = closeDrawer;
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+document.getElementById('placeOrderBtn').onclick = async ()=>{
+  const name = document.getElementById('custName').value.trim();
+  const phone = document.getElementById('custPhone').value.trim();
+  const address = document.getElementById('custAddress').value.trim();
+  const note = document.getElementById('orderNote').value.trim();
+  const payMethod = document.querySelector('input[name="pay"]:checked').value;
+  const currency = lang === 'ar' ? CONFIG.currencyAr : CONFIG.currencyEn;
+
+  if(Object.keys(cart).length === 0) return;
+  if(!name || !phone || !address){
+    showToast(lang==='ar' ? 'من فضلك اكتب الاسم والموبايل والعنوان' : 'Please fill in name, phone and address');
+    return;
+  }
+
+  const subtotal = computeSubtotal();
+  const deliveryFee = computeDeliveryFee();
+  const tax = (subtotal + deliveryFee) * CONFIG.taxRate;
+  const grand = subtotal + deliveryFee + tax;
+
+  const orderItems = Object.entries(cart).map(([id,qty])=>{
+    const item = MENU.find(m=>m.id == id);
+    return item ? { id:item.id, ar:item.ar, en:item.en, price:item.price, qty } : null;
+  }).filter(Boolean);
+
+  const placeBtn = document.getElementById('placeOrderBtn');
+  placeBtn.disabled = true;
+
+  let orderId = null;
+  let trackingUrl = '';
+  try{
+    const ordersRef = ref(db, 'orders');
+    const newOrderRef = push(ordersRef);
+    orderId = newOrderRef.key;
+    await set(newOrderRef, {
+      items: orderItems,
+      subtotal, deliveryFee, tax, total: grand,
+      distanceKm: deliveryDistanceKm,
+      note, payMethod,
+      customerName: name, customerPhone: phone, customerAddress: address,
+      status: 'received',
+      createdAt: serverTimestamp()
+    });
+    trackingUrl = new URL('tracking.html', window.location.href).href + '?id=' + orderId;
+  }catch(err){
+    console.error('Firebase error:', err);
+    showToast(lang==='ar' ? 'حصل خطأ في حفظ الطلب، هيتبعت على واتساب برضو' : 'Could not save the order, but it will still be sent via WhatsApp');
+  }
+
+  const lines = [];
+  lines.push(lang==='ar' ? `طلب جديد من ${CONFIG.businessNameAr}` : `New order — ${CONFIG.businessNameEn}`);
+  lines.push('');
+  orderItems.forEach(item=>{
+    lines.push(`${item.qty} × ${lang==='ar'?item.ar:item.en} — ${(item.price*item.qty).toFixed(2)} ${currency}`);
+  });
+  lines.push('');
+  lines.push(`${lang==='ar'?'الإجمالي الفرعي':'Subtotal'}: ${subtotal.toFixed(2)} ${currency}`);
+  lines.push(`${lang==='ar'?'رسوم التوصيل':'Delivery'} (${deliveryDistanceKm!==null? deliveryDistanceKm.toFixed(1):'0'} km): ${deliveryFee.toFixed(2)} ${currency}`);
+  lines.push(`${lang==='ar'?'الضريبة':'Tax'}: ${tax.toFixed(2)} ${currency}`);
+  lines.push(`${lang==='ar'?'الإجمالي الكلي':'Total'}: ${grand.toFixed(2)} ${currency}`);
+  lines.push('');
+  if(note) lines.push(`${lang==='ar'?'ملاحظة':'Note'}: ${note}`);
+  lines.push(`${lang==='ar'?'طريقة الدفع':'Payment'}: ${payMethod==='cash' ? (lang==='ar'?'كاش عند الاستلام':'Cash on delivery') : (lang==='ar'?'فيزا عند الاستلام':'Card on delivery')}`);
+  lines.push('');
+  lines.push(`${lang==='ar'?'الاسم':'Name'}: ${name}`);
+  lines.push(`${lang==='ar'?'الموبايل':'Phone'}: ${phone}`);
+  lines.push(`${lang==='ar'?'العنوان':'Address'}: ${address}`);
+  if(trackingUrl){
+    lines.push('');
+    lines.push(`${lang==='ar'?'تابع حالة طلبك من هنا':'Track your order here'}: ${trackingUrl}`);
+  }
+
+  const message = encodeURIComponent(lines.join('\n'));
+  const url = `https://wa.me/${CONFIG.whatsappNumber}?text=${message}`;
+  window.open(url, '_blank');
+  placeBtn.disabled = false;
+};
+
+document.getElementById('langToggle').onclick = ()=>{
+  lang = lang === 'ar' ? 'en' : 'ar';
+  applyLang();
+};
+
+applyLang();
+</script>
+</body>
+</html>
