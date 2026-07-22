@@ -442,6 +442,10 @@
   <p class="section-sub" data-ar="الأسعار بالجنيه المصري" data-en="Prices in Egyptian Pounds">الأسعار بالجنيه المصري</p>
   
   <div class="tabs-wrapper">
+    <div style="max-width:440px;margin:0 auto 20px;">
+      <input type="text" id="menuSearchInput" placeholder="🔍 دور على طبق..."
+        style="width:100%;padding:12px 16px;border-radius:999px;border:1.5px solid var(--line);font-family:inherit;font-size:.9rem;">
+    </div>
     <div class="tabs" id="tabs"></div>
     
     <button class="btn-custom-trigger" id="toggleCustomBoxBtn" type="button">
@@ -599,13 +603,46 @@ const CONFIG = {
 };
 
 let MENU = [];
+let reorderHandled = false;
 onValue(ref(db, 'menu'), (snapshot)=>{
   const data = snapshot.val() || {};
   MENU = Object.entries(data)
     .map(([id, item])=>({ id, ...item }))
     .filter(item => item.available !== false);
   renderMenu();
+  if(!reorderHandled){
+    reorderHandled = true;
+    tryRestoreReorder();
+  }
 });
+
+function tryRestoreReorder(){
+  let saved = null;
+  try{ saved = JSON.parse(localStorage.getItem('emmie_reorder_items') || 'null'); }catch(e){}
+  if(!saved || !Array.isArray(saved) || saved.length === 0) return;
+  localStorage.removeItem('emmie_reorder_items');
+
+  let addedCount = 0;
+  let skippedCount = 0;
+  saved.forEach(it=>{
+    const stillExists = MENU.find(m=>m.id === it.id);
+    if(stillExists){
+      cart[it.id] = (cart[it.id] || 0) + (it.qty || 1);
+      addedCount++;
+    } else {
+      skippedCount++;
+    }
+  });
+  if(addedCount > 0){
+    renderCart();
+    showToast(
+      skippedCount > 0
+        ? (lang==='ar' ? `تم استرجاع طلبك، وبعض الأصناف مبقتش متاحة` : `Order restored, some items are no longer available`)
+        : (lang==='ar' ? 'تم استرجاع طلبك السابق ✓' : 'Your previous order was restored ✓')
+    );
+    openDrawer();
+  }
+}
 
 const CATEGORIES = [
   { key:'all', ar:"الكل", en:"All" },
@@ -624,6 +661,7 @@ let deliveryDistanceKm = null;
 let detectedCoords = null;
 
 const now = new Date();
+now.setDate(now.getDate() + 2);
 now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
 document.getElementById('preOrderTime').min = now.toISOString().slice(0, 16);
 
@@ -656,10 +694,24 @@ function renderTabs(){
   });
 }
 
+let menuSearchQuery = '';
+
 function renderMenu(){
   const grid = document.getElementById('menuGrid');
   grid.innerHTML = '';
-  const items = MENU.filter(i=> activeCat === 'all' || i.cat === activeCat);
+  let items = MENU.filter(i=> activeCat === 'all' || i.cat === activeCat);
+  if(menuSearchQuery){
+    items = items.filter(i=>
+      (i.ar||'').toLowerCase().includes(menuSearchQuery) ||
+      (i.en||'').toLowerCase().includes(menuSearchQuery) ||
+      (i.dAr||'').toLowerCase().includes(menuSearchQuery) ||
+      (i.dEn||'').toLowerCase().includes(menuSearchQuery)
+    );
+  }
+  if(items.length === 0){
+    grid.innerHTML = `<p style="grid-column:1/-1;text-align:center;color:var(--ink-soft);padding:30px 0;">${lang==='ar'?'مفيش أطباق مطابقة للبحث':'No dishes match your search'}</p>`;
+    return;
+  }
   items.forEach((item, idx)=>{
     const card = document.createElement('div');
     card.className = 'item-card';
@@ -999,6 +1051,10 @@ document.getElementById('placeOrderBtn').onclick = async ()=>{
 
 document.getElementById('confirmCloseBtn').onclick = ()=> document.getElementById('confirmOverlay').classList.remove('show');
 document.getElementById('langToggle').onclick = ()=>{ lang = lang === 'ar' ? 'en' : 'ar'; applyLang(); };
+document.getElementById('menuSearchInput').addEventListener('input', (e)=>{
+  menuSearchQuery = e.target.value.trim().toLowerCase();
+  renderMenu();
+});
 
 applyLang();
 </script>

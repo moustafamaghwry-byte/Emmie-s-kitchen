@@ -105,8 +105,12 @@
   .oc-total{font-weight:800;color:var(--gold);font-size:.95rem;}
 
   .oc-note{
-    background:#FBF3E4;border-inline-start:3px solid var(--gold);padding:8px 12px;font-size:#6E5A2E;
+    background:#FBF3E4;border-inline-start:3px solid var(--gold);padding:8px 12px;font-size:.83rem;
     margin-bottom:14px;color:#6E5A2E;border-radius:14px;
+  }
+  .oc-time-target{
+    background:#FDECEA;border-inline-start:3px solid var(--red);padding:9px 12px;font-size:.85rem;font-weight:700;
+    margin-bottom:14px;color:#8A2E22;border-radius:14px;
   }
 
   .oc-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;
@@ -209,6 +213,12 @@
 
   <div id="ordersView" class="view active">
     <div class="stats" id="stats"></div>
+    <div id="topSellers"></div>
+
+    <div class="search-box" style="max-width:900px;margin:14px auto 0;padding:0 24px;">
+      <input type="text" id="orderSearchInput" placeholder="🔍 دور بالاسم أو رقم الموبايل أو رقم الطلب..."
+        style="width:100%;padding:11px 16px;border-radius:20px;border:1px solid var(--line-ink);background:var(--paper);font-family:inherit;font-size:.88rem;color:var(--ink);">
+    </div>
 
     <div class="filters" id="filters">
       <button class="filter-btn active" data-f="all">الكل</button>
@@ -320,6 +330,7 @@ document.getElementById('logoutBtn').onclick = ()=> signOut(auth);
 
 let allOrders = [];
 let activeFilter = 'all';
+let searchQuery = '';
 
 onAuthStateChanged(auth, (user)=>{
   if(user){
@@ -343,13 +354,98 @@ document.querySelectorAll('.main-tab').forEach(tab=>{
   });
 });
 
+let knownOrderIds = null;
+
+function playNewOrderSound(){
+  try{
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const playBeep = (delay, freq)=>{
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.frequency.value = freq;
+      osc.type = 'sine';
+      gain.gain.setValueAtTime(0.001, ctx.currentTime + delay);
+      gain.gain.exponentialRampToValueAtTime(0.25, ctx.currentTime + delay + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 0.35);
+      osc.start(ctx.currentTime + delay);
+      osc.stop(ctx.currentTime + delay + 0.4);
+    };
+    playBeep(0, 880);
+    playBeep(0.18, 1180);
+  }catch(e){ console.warn('Sound not available', e); }
+}
+
+function flashTabTitle(){
+  const original = 'لوحة التحكم | مطبخ إيمي';
+  let toggled = false;
+  let count = 0;
+  const interval = setInterval(()=>{
+    document.title = toggled ? original : '🔔 طلب جديد!';
+    toggled = !toggled;
+    count++;
+    if(count > 6 || document.visibilityState === 'visible'){
+      clearInterval(interval);
+      document.title = original;
+    }
+  }, 800);
+  document.addEventListener('visibilitychange', function onVis(){
+    if(document.visibilityState === 'visible'){
+      clearInterval(interval);
+      document.title = original;
+      document.removeEventListener('visibilitychange', onVis);
+    }
+  });
+}
+
 function listenToOrders(){
   const ordersQuery = query(ref(db, 'orders'), orderByChild('createdAt'));
   onValue(ordersQuery, (snapshot)=>{
     const data = snapshot.val() || {};
     allOrders = Object.entries(data).map(([id, o])=>({ id, ...o })).reverse();
+
+    const currentIds = new Set(allOrders.map(o=>o.id));
+    if(knownOrderIds !== null){
+      const newOnes = [...currentIds].filter(id => !knownOrderIds.has(id));
+      if(newOnes.length > 0){
+        playNewOrderSound();
+        flashTabTitle();
+      }
+    }
+    knownOrderIds = currentIds;
+
     renderStats();
     renderOrders();
+    updateBestSeller();
+  });
+}
+
+let lastBestSellerId = undefined;
+
+function updateBestSeller(){
+  if(menuItems.length === 0) return; // لسه المنيو متحملتش
+  const salesByItem = {};
+  allOrders.forEach(o=>{
+    if(o.status === 'cancelled') return;
+    (o.items||[]).forEach(it=>{
+      salesByItem[it.id] = (salesByItem[it.id] || 0) + (it.qty || 0);
+    });
+  });
+
+  let topId = null, topQty = 0;
+  Object.entries(salesByItem).forEach(([id, qty])=>{
+    if(qty > topQty){ topQty = qty; topId = id; }
+  });
+
+  if(topId === lastBestSellerId) return; // مفيش تغيير، متكتبش على فايربيز تاني
+  lastBestSellerId = topId;
+
+  menuItems.forEach(item=>{
+    const shouldBeBest = item.id === topId;
+    const currentlyBest = item.bestSeller === true;
+    if(shouldBeBest !== currentlyBest){
+      update(ref(db, 'menu/' + item.id), { bestSeller: shouldBeBest });
+    }
   });
 }
 
@@ -357,12 +453,48 @@ function renderStats(){
   const box = document.getElementById('stats');
   const counts = { all: allOrders.length };
   STAGES.forEach(s=> counts[s.key] = allOrders.filter(o=>o.status===s.key).length);
+
+  const todayStr = new Date().toDateString();
+  let revenueToday = 0, ordersToday = 0;
+  allOrders.forEach(o=>{
+    if(!o.createdAt || o.status === 'cancelled') return;
+    if(new Date(o.createdAt).toDateString() === todayStr){
+      revenueToday += (o.total || 0);
+      ordersToday++;
+    }
+  });
+
+  const salesByItem = {};
+  allOrders.forEach(o=>{
+    if(o.status === 'cancelled') return;
+    (o.items||[]).forEach(it=>{
+      if(!salesByItem[it.id]) salesByItem[it.id] = { name: it.ar, qty: 0 };
+      salesByItem[it.id].qty += (it.qty || 0);
+    });
+  });
+  const topSellers = Object.values(salesByItem).sort((a,b)=> b.qty - a.qty).slice(0, 5);
+
   box.innerHTML = `
+    <div class="stat"><div class="n nums">${revenueToday.toFixed(0)} ج.م</div><div class="l">إيراد النهاردة</div></div>
+    <div class="stat"><div class="n nums">${ordersToday}</div><div class="l">طلبات النهاردة</div></div>
     <div class="stat"><div class="n nums">${counts.all}</div><div class="l">كل الطلبات</div></div>
     <div class="stat"><div class="n nums">${counts.received||0}</div><div class="l">تم الاستلام</div></div>
     <div class="stat"><div class="n nums">${counts.preparing||0}</div><div class="l">جاري التحضير</div></div>
     <div class="stat"><div class="n nums">${counts.out_for_delivery||0}</div><div class="l">خرج للتوصيل</div></div>
   `;
+
+  const topBox = document.getElementById('topSellers');
+  if(topBox){
+    topBox.innerHTML = topSellers.length === 0 ? '' : `
+      <h4 style="font-size:.85rem;color:var(--ink-soft);margin:16px 24px 8px;max-width:900px;margin-inline:auto;">🏆 الأكثر مبيعًا</h4>
+      <div style="max-width:900px;margin:0 auto;display:flex;gap:10px;flex-wrap:wrap;padding:0 24px 4px;">
+        ${topSellers.map((s,i)=>`
+          <div style="background:#fff;border:1px solid var(--line-ink);border-radius:14px;padding:10px 16px;font-size:.83rem;">
+            <b>${i+1}. ${s.name}</b> <span class="nums" style="color:var(--gold)">${s.qty}×</span>
+          </div>`).join('')}
+      </div>
+    `;
+  }
 }
 
 document.getElementById('filters').addEventListener('click',(e)=>{
@@ -374,18 +506,39 @@ document.getElementById('filters').addEventListener('click',(e)=>{
   renderOrders();
 });
 
+document.getElementById('orderSearchInput').addEventListener('input', (e)=>{
+  searchQuery = e.target.value.trim().toLowerCase();
+  renderOrders();
+});
+
 function fmtTime(ts){
   if(!ts) return '';
   const d = new Date(ts);
   return d.toLocaleString('ar-EG', { dateStyle:'medium', timeStyle:'short' });
 }
 
+function fmtDeliveryTime(val){
+  if(!val) return '';
+  const d = new Date(val);
+  if(isNaN(d.getTime())) return val;
+  return d.toLocaleString('ar-EG', { weekday:'long', day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
+}
+
 function renderOrders(){
   const list = document.getElementById('ordersList');
-  const orders = activeFilter === 'all' ? allOrders : allOrders.filter(o=>o.status===activeFilter);
+  let orders = activeFilter === 'all' ? allOrders : allOrders.filter(o=>o.status===activeFilter);
+
+  if(searchQuery){
+    orders = orders.filter(o=>{
+      const name = (o.customerName||'').toLowerCase();
+      const phone = (o.customerPhone||'').toLowerCase();
+      const num = String(o.orderNumber||'').toLowerCase();
+      return name.includes(searchQuery) || phone.includes(searchQuery) || num.includes(searchQuery);
+    });
+  }
 
   if(orders.length === 0){
-    list.innerHTML = `<div class="empty">مفيش طلبات هنا لسه</div>`;
+    list.innerHTML = `<div class="empty">مفيش طلبات مطابقة</div>`;
     return;
   }
 
@@ -409,6 +562,8 @@ function renderOrders(){
         <span class="badge ${o.status}">${(ALL_STATUSES.find(s=>s.key===o.status)||{}).ar || o.status}</span>
       </div>
 
+      ${o.deliveryTimeTarget ? `<div class="oc-time-target">🕒 ${fmtDeliveryTime(o.deliveryTimeTarget)}</div>` : ''}
+
       <div class="oc-grid">
         <div class="oc-block">
           <h4>الأصناف</h4>
@@ -420,6 +575,7 @@ function renderOrders(){
           <p>📍 ${o.customerAddress||'-'}</p>
           <p>${o.distanceKm!=null ? 'المسافة: ' + Number(o.distanceKm).toFixed(1) + ' كم' : ''}</p>
           <p>💳 ${o.payMethod==='cash' ? 'كاش عند الاستلام' : 'فيزا عند الاستلام'}</p>
+          ${o.mapsUrl ? `<p>🗺️ <a href="${o.mapsUrl}" target="_blank" style="color:var(--gold)">فتح لوكيشن العميل ↗</a></p>` : ''}
         </div>
       </div>
 
@@ -480,6 +636,7 @@ function listenToMenu(){
     const data = snapshot.val() || {};
     menuItems = Object.entries(data).map(([id, item])=>({ id, ...item }));
     renderMenuGroups();
+    updateBestSeller();
   });
 }
 
