@@ -530,7 +530,10 @@
 
     <div class="field">
       <label data-ar="تاريخ ووقت الاستلام المطلوب" data-en="Required Delivery/Pickup Time">تاريخ ووقت الاستلام المطلوب</label>
-      <input type="datetime-local" id="preOrderTime" required>
+      <div style="display:flex;gap:8px;">
+        <select id="deliveryDaySelect" style="flex:1.3;"></select>
+        <select id="deliveryTimeSelect" style="flex:1;"></select>
+      </div>
     </div>
 
     <div class="field">
@@ -704,10 +707,56 @@ let customItems = [];
 let deliveryDistanceKm = null;
 let detectedCoords = null;
 
-const now = new Date();
-now.setDate(now.getDate() + 2);
-now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-document.getElementById('preOrderTime').min = now.toISOString().slice(0, 16);
+const DELIVERY_TIME_SLOTS = ['12:00','14:00','16:00','18:00','20:00','22:00'];
+const DAY_NAMES_AR = ['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+const DAY_NAMES_EN = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONTH_NAMES_AR = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+
+function buildDeliveryDayOptions(){
+  const sel = document.getElementById('deliveryDaySelect');
+  sel.innerHTML = '';
+  for(let i = 2; i <= 8; i++){
+    const d = new Date();
+    d.setDate(d.getDate() + i);
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    const dd = String(d.getDate()).padStart(2,'0');
+    const value = `${yyyy}-${mm}-${dd}`;
+    const dayIdx = d.getDay();
+    const label = lang==='ar'
+      ? `${DAY_NAMES_AR[dayIdx]} ${d.getDate()} ${MONTH_NAMES_AR[d.getMonth()]}`
+      : `${DAY_NAMES_EN[dayIdx]} ${d.getDate()}/${d.getMonth()+1}`;
+    const opt = document.createElement('option');
+    opt.value = value;
+    opt.textContent = label;
+    sel.appendChild(opt);
+  }
+}
+
+function buildDeliveryTimeOptions(){
+  const sel = document.getElementById('deliveryTimeSelect');
+  sel.innerHTML = '';
+  DELIVERY_TIME_SLOTS.forEach(t=>{
+    const [h, m] = t.split(':').map(Number);
+    const period = lang==='ar' ? (h < 17 ? 'الظهر' : 'المساء') : (h < 17 ? 'PM' : 'PM');
+    const h12 = h > 12 ? h - 12 : h;
+    const label = lang==='ar' ? `${h12}:${String(m).padStart(2,'0')} ${period}` : `${h12}:${String(m).padStart(2,'0')} ${period}`;
+    const opt = document.createElement('option');
+    opt.value = t;
+    opt.textContent = label;
+    sel.appendChild(opt);
+  });
+}
+
+function getSelectedDeliveryDateTime(){
+  const day = document.getElementById('deliveryDaySelect').value;
+  const time = document.getElementById('deliveryTimeSelect').value;
+  if(!day || !time) return '';
+  return `${day}T${time}`;
+}
+
+buildDeliveryDayOptions();
+buildDeliveryTimeOptions();
 
 function applyLang(){
   document.documentElement.lang = lang;
@@ -721,6 +770,12 @@ function applyLang(){
     const val = lang === 'ar' ? el.getAttribute('data-ar-ph') : el.getAttribute('data-en-ph');
     if(val !== null) el.setAttribute('placeholder', val);
   });
+  const keptDay = document.getElementById('deliveryDaySelect').value;
+  const keptTime = document.getElementById('deliveryTimeSelect').value;
+  buildDeliveryDayOptions();
+  buildDeliveryTimeOptions();
+  if(keptDay) document.getElementById('deliveryDaySelect').value = keptDay;
+  if(keptTime) document.getElementById('deliveryTimeSelect').value = keptTime;
   renderMenu();
   renderTabs();
   renderCart();
@@ -1008,7 +1063,7 @@ document.getElementById('placeOrderBtn').onclick = async ()=>{
   const phone = document.getElementById('custPhone').value.trim();
   const address = document.getElementById('custAddress').value.trim();
   const note = document.getElementById('orderNote').value.trim();
-  const preTime = document.getElementById('preOrderTime').value;
+  const preTime = getSelectedDeliveryDateTime();
   const mapsUrl = document.getElementById('googleMapsUrl').value.trim();
   const payMethod = document.querySelector('input[name="pay"]:checked').value;
 
