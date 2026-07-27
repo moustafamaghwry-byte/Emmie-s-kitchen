@@ -439,6 +439,7 @@ function updateBestSeller(){
 
   if(topId === lastBestSellerId) return; // مفيش تغيير، متكتبش على فايربيز تاني
   lastBestSellerId = topId;
+  renderOrders(); // نحدّث الشارة في قائمة الطلبات كمان
 
   menuItems.forEach(item=>{
     const shouldBeBest = item.id === topId;
@@ -511,6 +512,13 @@ document.getElementById('orderSearchInput').addEventListener('input', (e)=>{
   renderOrders();
 });
 
+function toIntlPhone(phone){
+  let digits = (phone||'').replace(/[^0-9]/g,'');
+  if(digits.startsWith('0')) digits = '20' + digits.slice(1);
+  else if(digits.length === 10 && !digits.startsWith('20')) digits = '20' + digits;
+  return digits;
+}
+
 function fmtTime(ts){
   if(!ts) return '';
   const d = new Date(ts);
@@ -544,13 +552,26 @@ function renderOrders(){
 
   list.innerHTML = orders.map(o=>{
     const itemsHtml = (o.items||[]).map(it=>
-      `<div class="items-line"><span>${it.qty} × ${it.ar}</span><span class="nums">${(it.price*it.qty).toFixed(2)} ${CURRENCY}</span></div>`
+      `<div class="items-line"><span>${it.qty} × ${it.ar}${it.id === lastBestSellerId ? ' <span title="الأكثر مبيعًا" style="color:var(--gold)">🏆</span>' : ''}</span><span class="nums">${(it.price*it.qty).toFixed(2)} ${CURRENCY}</span></div>`
     ).join('');
     const statusOptions = ALL_STATUSES.map(s=>
       `<option value="${s.key}" ${o.status===s.key?'selected':''}>${s.ar}</option>`
     ).join('');
-    const waNumberOnly = (o.customerPhone||'').replace(/[^0-9]/g,'');
+    const waNumberIntl = toIntlPhone(o.customerPhone);
     const trackUrl = new URL('tracking.html', window.location.href).href + '?id=' + o.id;
+    const custMsgLines = [
+      `أهلاً ${o.customerName||''} 🌸`,
+      `تم استلام طلبك من مطبخ إيمي بنجاح!`,
+      `رقم طلبك: #${o.orderNumber || o.id.slice(-6).toUpperCase()}`,
+      '',
+      ...(o.items||[]).map(it=> `${it.qty} × ${it.ar}`),
+      '',
+      `الإجمالي: ${(o.total||0).toFixed(2)} ج.م`,
+      '',
+      `تابع حالة طلبك من هنا: ${trackUrl}`
+    ];
+    const custMsg = encodeURIComponent(custMsgLines.join('\n'));
+    const waLink = waNumberIntl ? `https://wa.me/${waNumberIntl}?text=${custMsg}` : '';
 
     return `
     <div class="order-card">
@@ -596,7 +617,7 @@ function renderOrders(){
         <select class="status-select" data-id="${o.id}">${statusOptions}</select>
         <div style="display:flex;gap:14px;align-items:center;">
           <a class="track-link" href="${trackUrl}" target="_blank">رابط تتبع العميل ↗</a>
-          ${waNumberOnly ? `<a class="wa-link" href="https://wa.me/${waNumberOnly}" target="_blank">📲 واتساب</a>` : ''}
+          ${waLink ? `<a class="wa-link" href="${waLink}" target="_blank">📲 راسل العميل</a>` : ''}
         </div>
       </div>
     </div>`;

@@ -91,7 +91,12 @@
   .hero h1{font-size:2.7rem;line-height:1.2;margin-bottom:16px;color:var(--ink);}
   .hero h1 span{color:var(--coral);}
   .hero p.lead{font-size:1.06rem;color:var(--ink-soft);max-width:46ch;margin-bottom:26px;}
-  .hero-ctas{display:flex;gap:12px;flex-wrap:wrap;}
+  .hero-ctas{display:flex;gap:12px;flex-wrap:wrap;align-items:center;}
+  .btn-track-small{
+    background:transparent;color:var(--ink-soft);border:none;padding:8px 4px;
+    font-weight:700;font-size:.84rem;text-decoration:underline;text-underline-offset:3px;cursor:pointer;
+  }
+  .btn-track-small:hover{color:var(--coral-dark);}
   .btn-primary{
     background:var(--coral);color:#fff;border:none;padding:15px 28px;
     border-radius:999px;font-weight:800;font-size:0.98rem;box-shadow:0 10px 24px rgba(240,121,107,.35);
@@ -288,6 +293,45 @@
   .pay-option input{position:absolute;opacity:0;inset:0;cursor:pointer;margin:0;}
   .pay-option.selected{border-color:var(--coral);background:var(--coral-light);color:var(--coral-dark);}
   .totals-box{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;margin-top:14px;}
+
+  /* ===== Embedded order tracking ===== */
+  .track-section{max-width:640px;margin:0 auto;padding:50px 20px;}
+  .track-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:26px 24px;box-shadow:var(--shadow);}
+  .track-card h3{font-size:1.1rem;margin-bottom:6px;color:var(--ink);}
+  .track-card p.sub{color:var(--ink-soft);font-size:.85rem;margin-bottom:16px;}
+  .track-form{display:flex;gap:8px;}
+  .track-form input{
+    flex:1;padding:12px 16px;border-radius:999px;border:1.5px solid var(--line);font-family:inherit;
+    font-size:.95rem;text-align:center;color:var(--ink);
+  }
+  .track-form input:focus{border-color:var(--coral);outline:none;}
+  .track-form button{
+    background:var(--coral);color:#fff;border:none;padding:12px 24px;border-radius:999px;
+    font-weight:800;font-size:.88rem;cursor:pointer;white-space:nowrap;
+  }
+  .track-form button:hover{background:var(--coral-dark);}
+  .track-error{color:#C0453A;font-size:.8rem;min-height:1em;margin-top:10px;text-align:center;font-weight:700;}
+  .track-result{margin-top:22px;}
+  .tr-id{text-align:center;margin-bottom:18px;}
+  .tr-id span{
+    display:inline-block;background:var(--ink);color:#fff;font-weight:800;font-size:1.05rem;
+    padding:7px 20px;border-radius:999px;letter-spacing:.03em;
+  }
+  .tr-stepper{display:flex;justify-content:space-between;position:relative;margin:0 0 24px;padding:0 4px;}
+  .tr-stepper::before{content:"";position:absolute;top:16px;inset-inline-start:6%;inset-inline-end:6%;height:3px;background:var(--line);z-index:0;border-radius:3px;}
+  .tr-stepper .fill{position:absolute;top:16px;inset-inline-start:6%;height:3px;background:var(--coral);z-index:1;transition:width .5s ease;width:0%;border-radius:3px;}
+  .tr-step{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;}
+  .tr-dot{width:32px;height:32px;border-radius:50%;background:#fff;border:2px solid var(--line);
+    display:flex;align-items:center;justify-content:center;font-size:.85rem;color:var(--ink-soft);}
+  .tr-step.done .tr-dot{border-color:var(--coral);background:var(--coral);color:#fff;}
+  .tr-step.current .tr-dot{border-color:var(--coral);background:#fff;color:var(--coral-dark);box-shadow:0 0 0 4px var(--coral-light);}
+  .tr-label{font-size:.68rem;text-align:center;color:var(--ink-soft);max-width:70px;font-weight:700;}
+  .tr-step.done .tr-label, .tr-step.current .tr-label{color:var(--ink);}
+  .tr-status-banner{background:var(--coral-light);border-radius:14px;padding:16px;text-align:center;margin-bottom:16px;}
+  .tr-status-banner .val{color:var(--coral-dark);font-weight:800;font-size:1.05rem;}
+  .tr-cancelled{background:#FBEAE7;border-radius:14px;padding:16px;text-align:center;color:#C0453A;font-weight:800;margin-bottom:16px;}
+  .tr-more-link{display:block;text-align:center;margin-top:14px;color:var(--blue);font-weight:700;font-size:.85rem;text-decoration:none;}
+  .tr-more-link:hover{text-decoration:underline;}
   .totals-row{display:flex;justify-content:space-between;font-size:.88rem;padding:4px 0;color:var(--ink-soft);}
   .totals-row.grand{border-top:2px dashed var(--line);margin-top:6px;padding-top:10px;font-weight:800;font-size:1.08rem;color:var(--coral-dark);}
   .drawer-foot{padding:16px 20px 22px;border-top:1px solid var(--line);background:#fff;}
@@ -411,6 +455,7 @@
       <div class="hero-ctas">
         <button class="btn-primary" onclick="document.getElementById('menuTop').scrollIntoView({behavior:'smooth'})" data-ar="اطلب دلوقتي" data-en="Order now">اطلب دلوقتي</button>
         <button class="btn-secondary" id="openCartBtn2" data-ar="شوف السلة" data-en="View cart">شوف السلة</button>
+        <button class="btn-track-small" onclick="window.location.href='tracking.html'" data-ar="تابع طلبك" data-en="Track order">تابع طلبك</button>
       </div>
     </div>
     <div class="hero-visual">
@@ -469,7 +514,6 @@
 <footer>
   <div class="footer-brand"><img src="logo.png" alt="مطبخ إيمي"><strong data-ar="مطبخ إيمي" data-en="Emmie's Kitchen">مطبخ إيمي</strong></div>
   <p data-ar="طعم البيت، لحد باب بيتك 🏡" data-en="The taste of home, delivered to your door 🏡">طعم البيت، لحد باب بيتك 🏡</p>
-  <p style="margin-top:10px"><a href="tracking.html" style="color:var(--blue);font-weight:700;text-decoration:none" data-ar="تابع طبق سابق ↗" data-en="Track a previous order ↗">تابع طبق سابق ↗</a></p>
 </footer>
 
 <div class="overlay" id="overlay"></div>
@@ -575,7 +619,7 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getDatabase, ref, push, set, onValue, serverTimestamp, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { getDatabase, ref, push, set, onValue, serverTimestamp, runTransaction, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA8h_w_JvoPV1PA5QFHJg_nAInFLCSEw9Y",
@@ -1039,6 +1083,36 @@ document.getElementById('placeOrderBtn').onclick = async ()=>{
   placeBtn.disabled = false;
 
   if(orderNumber){
+    const currency = lang === 'ar' ? CONFIG.currencyAr : CONFIG.currencyEn;
+    const lines = [];
+    lines.push(lang==='ar' ? `طلب جديد من ${CONFIG.businessNameAr}` : `New order — ${CONFIG.businessNameEn}`);
+    lines.push(`${lang==='ar'?'رقم الطلب':'Order number'}: #${orderNumber}`);
+    lines.push('');
+    orderItems.forEach(item=>{
+      lines.push(`${item.qty} × ${lang==='ar'?item.ar:item.en} — ${(item.price*item.qty).toFixed(2)} ${currency}`);
+    });
+    lines.push('');
+    lines.push(`${lang==='ar'?'الإجمالي الفرعي':'Subtotal'}: ${subtotal.toFixed(2)} ${currency}`);
+    lines.push(`${lang==='ar'?'رسوم التوصيل':'Delivery'}: ${deliveryFee.toFixed(2)} ${currency}`);
+    lines.push(`${lang==='ar'?'الضريبة':'Tax'}: ${tax.toFixed(2)} ${currency}`);
+    lines.push(`${lang==='ar'?'الإجمالي الكلي':'Total'}: ${grand.toFixed(2)} ${currency}`);
+    lines.push('');
+    lines.push(`${lang==='ar'?'تاريخ ووقت الاستلام':'Delivery time'}: ${preTime}`);
+    if(note) lines.push(`${lang==='ar'?'ملاحظة':'Note'}: ${note}`);
+    lines.push(`${lang==='ar'?'طريقة الدفع':'Payment'}: ${payMethod==='cash' ? (lang==='ar'?'كاش عند الاستلام':'Cash on delivery') : (lang==='ar'?'فيزا عند الاستلام':'Card on delivery')}`);
+    lines.push('');
+    lines.push(`${lang==='ar'?'الاسم':'Name'}: ${name}`);
+    lines.push(`${lang==='ar'?'الموبايل':'Phone'}: ${phone}`);
+    lines.push(`${lang==='ar'?'العنوان':'Address'}: ${address}`);
+    if(finalGeoUrl) lines.push(`${lang==='ar'?'لوكيشن':'Location'}: ${finalGeoUrl}`);
+    if(trackingUrl){
+      lines.push('');
+      lines.push(`${lang==='ar'?'تابع حالة طلبك من هنا':'Track your order here'}: ${trackingUrl}`);
+    }
+
+    const message = encodeURIComponent(lines.join('\n'));
+    window.open(`https://wa.me/${CONFIG.whatsappNumber}?text=${message}`, '_blank');
+
     document.getElementById('confirmNumber').textContent = '#' + orderNumber;
     document.getElementById('confirmTrackLink').href = trackingUrl || '#';
     document.getElementById('confirmOverlay').classList.add('show');
